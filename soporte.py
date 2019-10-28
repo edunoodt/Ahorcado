@@ -1,19 +1,26 @@
 import sqlite3
 import random as ra
+import dibujo
 def bajar(lineas):
     for i in range (lineas): print()
 def sql_connection():
     con = sqlite3.connect('basePalabras.db')
     return con
 def bienvenida():
-    bajar(10)
+    bajar(20)
     print('Bienvenido al juego del Ahorcado')
-    print('tendrás seis chances para adivinar las letras de la palabra oculta')
-    print('en cualquier momento podrás adivinar la palabra oculta. Si no la adivinas pierdes una chance')
-    bajar(4)
+    print('Podés elegie entre el modo "TEMATICO" donde se indican las letras de la palabra mediante guiones y ademas ')
+    print('se indica el "TEMA o AREA DEL CONOCIMIENTO" al que pertenece la palabra')
+    print('O podes elegie "EXTREMOS" donde el juego te informa la primera y última letra de la palabra')
+    print('tendrás seis chances o vidas para adivinar las letras de la palabra oculta')
+    print('si te equivocas ya sea de letra o de palabra, perdés una vida')
+
+    print('en cualquier momento podrás ingresar o una letra o la palabra oculta.')
+    bajar(6)
+    print('___________________________________________________________________________________________________________')
     print('Ingresa tu nombre')
     nombre=input('==> ')
-    return nombre
+    return nombre.upper()
 def busquedaNombre(nombre,con):
     nombre=nombre.upper()
     cursorObj=con.cursor()
@@ -64,4 +71,60 @@ def mostrarPalabraOculta(vector2,adivinadas):
         else:
             print('_', end=' ')
 
+def juego(jugador,modo,parElegido):
+    adivinadas = []
+    vidas = 6
+    for i in range(len(parElegido[0])): adivinadas.append(False)
+    if modo == 2:
+        adivinadas[0] = True
+        adivinadas[len(parElegido[0]) - 1] = True
+    gano = False
+    if modo == 1:
+        inf = 0
+        sup = len(parElegido[0])
+    else:
+        inf = 1
+        sup = len((parElegido[0])) - 1
+    while gano == False and vidas > 0:
+        dibujo.horca(6 - vidas, jugador)
+        print(' ', end='   ')
+        mostrarPalabraOculta(parElegido[0], adivinadas)
+        bajar(2)
+        if modo == 1: print('Categoría====>> ', parElegido[1])
+        bajar(2)
+        respuesta = input('Ingrese letra o palabra ==> ')
+        respuesta = respuesta.upper()
+        encontroLetra = False
+        if len(respuesta) == 1:
+            todoslosguiones = True
+            for i in range(inf, sup):
+                if respuesta == parElegido[0][i]:
+                    adivinadas[i] = True
+                    encontroLetra = True
+                todoslosguiones = todoslosguiones and adivinadas[i]
+        else:
+            if respuesta == parElegido[0]:
+                gano = True
+        if todoslosguiones:
+            gano = True
+        if not encontroLetra:
+            vidas = vidas - 1
+    return [gano,vidas]
+def final(jugador,resultadoJuego,con):
+    if resultadoJuego[0]:
+        cursorObj = con.cursor()
+        cursorObj.execute('SELECT PUNTAJE FROM JUGADORES WHERE NOMBRE="{}";'.format(jugador.upper()))
+        puntaje = cursorObj.fetchall()
+        print(jugador.upper())
+        puntos = puntaje[0][0] + 10
+        cursorObj.execute('UPDATE JUGADORES SET PUNTAJE=("{}") WHERE JUGADORES.NOMBRE=("{}");'.format(puntos, jugador))
+        con.commit()
+        print('GANO!!')
+        print('felicitaciones!')
+        print('Usted tiene ahora ', puntos, ' puntos')
 
+    else:
+        dibujo.horca(6 - resultadoJuego[1], jugador)
+        print(jugador.upper())
+        print('PERDIO!')
+        print('Que pena!')

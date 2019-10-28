@@ -1,7 +1,7 @@
 #nombre=input('Ingrese su Nombre =>  ')
 #chancesStr=(input('ingrese las chances '))
 def horca(chances,nombre):
-    for i in range(5):
+    for i in range(20):
         print()
     print('             IIIIIIIIIIIIIIIIIIIIIIII')
     print('             IIIIIIIIIIIIIIIIIIIIIIII')
@@ -42,31 +42,25 @@ def horca(chances,nombre):
         print('             III                     \ ')
     else:
         print('             III                 /   \ ')
-    if chances<7:
+    if chances<5:
         print('             III')
-    elif chances<8:
+    elif chances<6:
         print('             III                      |')
     else:
         print('             III                |     |')
-    if chances<7:
+    if chances<5:
         print('             III')
-    elif chances<8:
+    elif chances<6:
         print('             III                      |')
     else:
         print('             III                |     |        <==== AHORCADO!!!!!!')
-    if chances<7:
+    if chances<5:
         print('             III')
-    elif chances<8:
+    elif chances<6:
         print('             III                      |__')
     else:
         print('             III              __|     |__')
 
-    print('             III')
-    print('             III')
-    print('             III')
-    print('             III')
-    print('             III')
-    print('             III')
     print('             III')
     print('             III')
     print('             III')
